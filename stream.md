@@ -56,3 +56,11 @@ pipe/unpipe
 * 使用stream可对src设置(..,{buffer: false})
 * Node Stream和Vinyl File Object Stream的互相转换 ：vinyl-source-stream
 
+
+
+
+##### 参考资料：
+[Stream API](https://nodejs.org/api/stream.html)
+[Stream Handbook](https://github.com/substack/stream-handbook)
+[探究Gulp的Stream](https://segmentfault.com/a/1190000003770541)
+
