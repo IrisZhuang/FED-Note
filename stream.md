@@ -12,7 +12,6 @@
     duplex
     classic
 
-.pipe()
 
 * readable._read()可通过定义函数避免.push()缓存数据,仅当数据消耗者出现数据才会推送,如.pipe() shell中可通过|head -cn 设置请求n比特的数据,-n 请求前n行
 * process.stdin 一个指向 标准输入流(stdin) 的可读流(Readable Stream) 可直接消耗数据
@@ -60,7 +59,7 @@ pipe/unpipe
 
 
 ##### 参考资料：
-[Stream API](https://nodejs.org/api/stream.html)
-[Stream Handbook](https://github.com/substack/stream-handbook)
-[探究Gulp的Stream](https://segmentfault.com/a/1190000003770541)
+1. [Stream API](https://nodejs.org/api/stream.html)
+2. [Stream Handbook](https://github.com/substack/stream-handbook)
+3. [探究Gulp的Stream](https://segmentfault.com/a/1190000003770541)
 
