@@ -1,8 +1,27 @@
 ##### From [we-have-a-problem-with-promises](https://pouchdb.com/2015/05/18/we-have-a-problem-with-promises.html)
 
 
-1. 正确使用composing promises
+1. 正确使用composing promises  
 
+remotedb.allDocs({  
+
+  include_docs: true,  
+
+  attachments: true  
+
+}).then(function (result) {  
+
+  var docs = result.rows;  
+
+  docs.forEach(function(element) {  
+
+    localdb.put(element.doc).then(function(response) {  
+      alert("Pulled doc with id " + element.doc._id + " and added to local db.");  
+    }).catch(function (err) {  
+      if (err.name == 'conflict') {  
+        localdb.get(element.doc._id).then(function (resp) {  
+          localdb.remove(resp._id, resp._rev).then(function (resp) {  
+// et cetera...  
 
 
 then 里面调用then,更好的实现方式是composing promises，后一个then会调用前一个返回的结果。
