@@ -1,6 +1,6 @@
-##### From [we-have-a-problem-with-promises](https://pouchdb.com/2015/05/18/we-have-a-problem-with-promises.html)
+#### From [we-have-a-problem-with-promises](https://pouchdb.com/2015/05/18/we-have-a-problem-with-promises.html)
 
-
+##### 初级错误
 1. 正确使用composing promises  
 
         remotedb.allDocs({  
@@ -102,9 +102,9 @@
         // Gee, I hope someOtherPromise() has resolved!  
         // Spoiler alert: it hasn't.  
         });  
-
-
-    eg.
+ 
+    回到之前的问题，
+    eg.  
         somePromise().then(function () {  
         // I'm inside a then() function!  
         });  
@@ -112,7 +112,14 @@
 
     当我们有一个then()的时候，我们可以做这些事：
 
-  - 返回一个promise
-  - 返回一个异步的value 或者 undefine
-  - 返回一个异步的错误
+    - 返回一个promise
+    - 返回一个异步的value 或者 undefine
+    - 返回一个异步的错误
+
+    第二个then不会关心前一个then返回的是同步还是异步的结果，但是non-returning的函数将返回undefine，所以很可能当你想返回一些东西的时候，实际上仅仅实现了一个side effects.
+    所以，比较好的建议是无论什么时候都在then()中加上return 或者 throw.
+    而 throw 是promise的另一个神奇之处，catch可以接收到一个同步的错误，也可接受来自被拒绝的promise的异步错误。例如，JSON.parse(params)中params无效时报的错误将会被catch捕捉。
+
+
+##### 进阶错误
 
