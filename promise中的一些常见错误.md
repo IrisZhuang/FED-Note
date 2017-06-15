@@ -104,7 +104,8 @@
         });  
  
     回到之前的问题，
-    eg.  
+    eg.    
+
         somePromise().then(function () {  
         // I'm inside a then() function!  
         });  
@@ -122,12 +123,15 @@
 
 
 ##### 进阶错误
-1. 不知道用promise.resolv()
+1. 不知道用promise.resolve()
 
     习惯new Promise((resolve,reject)=>{resolve(someSynchronousValue)} ).then()
     可以优化为
     Promise.resolve(someSynchronousValue).then();
     好处是一些同步错误可以被捕捉到。
+    如果希望得到一个Promise对象，比较方便的方法就是直接调用Promise.resolve方法。eg. var p = Promise.resolve();
+    需要注意的是，立即resolve的Promise对象，是在本轮“事件循环”（event loop）的结束时，而不是在下一轮“事件循环”的开始时,
+    (我的理解是加到执行栈的尾端,关于event-loop可参考node入门中的md)
 
 2. catch 和 then第二个参数的区别
 
@@ -161,3 +165,57 @@
             let result2 = result +1;
             return  Promise.resolve(result2)
         }
+
+
+5. 一个问题：
+
+        Promise.resolve('foo').then(Promise.resolve('bar')).then(function (result) {  
+            console.log(result);  
+        });  
+
+    输出foo 还是 bar？
+
+    答案： foo
+
+    当在then里传的是非函数时，即使传的是一个Promise对象，也会被处理为then(null)而将result传递到下一个result中，这也解释了第三个问题result.then(promise)为什么不能达到效果，因为这里的promise是非函数对象，只有通过myPromiseFactory将其变为函数，才不会pass through到下一个then
+
+        Promise.resolve('foo').then(function () {  
+            return Promise.resolve('bar');  
+        }).then(function (result) {  
+            console.log(result);  
+        });  
+    
+    这样才会输出bar
+
+
+    * 我的一些理解 ：then中为non-function和side effects（non-returning）是两种情况
+
+            doSomething().then(Promise.resolve(resultOfDoSomething)).then(finalHandler);
+
+                VS
+
+            doSomething().then(function () {  
+                doSomethingElse();  
+            }).then(finalHandler);  
+
+
+
+            前者
+            doSomething
+            |-----------------|
+                            Promise对象 = then(null)
+                            |------------------|
+                            finalHandler(resultOfDoSomething)
+                            |------------------|
+            后者  
+            doSomething
+            |-----------------|
+                            doSomethingElse(undefined)
+                            |------------------|
+                            finalHandler(undefined)
+                            |------------------|
+            ）
+
+
+
+
