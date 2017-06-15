@@ -37,26 +37,26 @@
 
 2. 用promise.all()实现forEach/for/while
 
-    // I want to remove() all docs  
-    db.allDocs({include_docs: true}).then(function (result) {  
-    result.rows.forEach(function (row) {  
-        db.remove(row.doc);    
-    });  
-    }).then(function () {  
-    // I naively believe all docs have been removed() now!  
-    });  
+        // I want to remove() all docs  
+        db.allDocs({include_docs: true}).then(function (result) {  
+        result.rows.forEach(function (row) {  
+            db.remove(row.doc);    
+        });  
+        }).then(function () {  
+        // I naively believe all docs have been removed() now!  
+        });  
 
     前一个then并没有返回一个新的promise结果给第二个then,所以第二个then在db.remove()之前就已经执行。
 
     解决方案：
 
-    db.allDocs({include_docs: true}).then(function (result) {  
-    return Promise.all(result.rows.map(function (row) {  
-        return db.remove(row.doc);  
-    }));  
-    }).then(function (arrayOfResults) {  
-    // All docs have really been removed() now!  
-    });  
+        db.allDocs({include_docs: true}).then(function (result) {  
+        return Promise.all(result.rows.map(function (row) {  
+            return db.remove(row.doc);  
+        }));  
+        }).then(function (arrayOfResults) {  
+        // All docs have really been removed() now!  
+        });  
 
 
 3. 没有加 .catch()
@@ -81,33 +81,33 @@
     函数一般认为是没有状态的，每次用相同的输入调用时应当给出相同的输出，且不会影响程序的其它部分。如果函数对程序的状态有影响，这种影响就叫作“side effects”。  例如：  
 
     
-    int counter = 0;
+        int counter = 0;
 
-    // with side effect
-    int intCounter() {
-        counter += 1;
-        return counter;
-    }
+        // with side effect
+        int intCounter() {
+            counter += 1;
+            return counter;
+        }
 
-    // without side effect
-    int intNumber(int m) {
-        return m + 1;
-    }
+        // without side effect
+        int intNumber(int m) {
+            return m + 1;
+        }
     
     intCounter改变了外部环境,所以是side effects; intNumber只改变了自身变量，所以without side effect；
 
-    somePromise().then(function () {  
-    someOtherPromise();  
-    }).then(function () {  
-    // Gee, I hope someOtherPromise() has resolved!  
-    // Spoiler alert: it hasn't.  
-    });  
+        somePromise().then(function () {  
+        someOtherPromise();  
+        }).then(function () {  
+        // Gee, I hope someOtherPromise() has resolved!  
+        // Spoiler alert: it hasn't.  
+        });  
 
 
     eg.
-    somePromise().then(function () {  
-    // I'm inside a then() function!  
-    });  
+        somePromise().then(function () {  
+        // I'm inside a then() function!  
+        });  
 
 
     当我们有一个then()的时候，我们可以做这些事：
