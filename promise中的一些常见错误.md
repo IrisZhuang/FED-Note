@@ -1,4 +1,4 @@
-#####From [we-have-a-problem-with-promises](https://pouchdb.com/2015/05/18/we-have-a-problem-with-promises.html)
+##### From [we-have-a-problem-with-promises](https://pouchdb.com/2015/05/18/we-have-a-problem-with-promises.html)
 
 
 1. 正确使用composing promises
@@ -7,8 +7,9 @@
 
 then 里面调用then,更好的实现方式是composing promises，后一个then会调用前一个返回的结果。
 
-优化方案：
-`   remotedb.allDocs(...).then(function (resultOfAllDocs) {  
+优化方案：  
+
+    remotedb.allDocs(...).then(function (resultOfAllDocs) {  
 
         return localdb.put(...);  
 
@@ -24,7 +25,7 @@ then 里面调用then,更好的实现方式是composing promises，后一个then
 
         console.log(err);  
 
-    });`
+    });
 
 
 
