@@ -124,7 +124,7 @@
 ##### 进阶错误
 1. 不知道用promise.resolv()
 
-    习惯new Promise((resolve,reject)=>{resolve()} ).then()
+    习惯new Promise((resolve,reject)=>{resolve(someSynchronousValue)} ).then()
     可以优化为
     Promise.resolve(someSynchronousValue).then();
     好处是一些同步错误可以被捕捉到。
@@ -143,10 +143,21 @@
                 return result;  
             }
 
-        promise array不能达到这个效果，他们还是会并行，因为promise被创建时，他就开始执行了，所以需要这样一个promise工厂，当promise被需要时，才会返回一个promise
+    promise array不能达到这个效果，他们还是会并行，因为promise被创建时，他就开始执行了，所以需要这样一个promise工厂，当promise被需要时，才会返回一个promise
 
             function myPromiseFactory() {  
                 return somethingThatCreatesAPromise();  
             }  
 
-4.
+4. 在第三个then中同时获取来自第二个then和第一个then的结果
+
+        let a = Promise.resolve(2).then((result)=>{
+            return test(result).then((result2)=>{console.log(result + ':'+ result2)});
+        }).then((result)=>{
+        console.log('done')
+        })
+
+        function test(result){
+            let result2 = result +1;
+            return  Promise.resolve(result2)
+        }
