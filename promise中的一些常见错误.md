@@ -20,15 +20,15 @@
 then 里面调用then,更好的实现方式是composing promises，后一个then会调用前一个返回的结果。
 
 优化方案：
-`remotedb.allDocs(...).then(function (resultOfAllDocs) {
-  return localdb.put(...);
-}).then(function (resultOfPut) {
-  return localdb.get(...);
-}).then(function (resultOfGet) {
-  return localdb.put(...);
-}).catch(function (err) {
-  console.log(err);
-});`
+`   remotedb.allDocs(...).then(function (resultOfAllDocs) {
+        return localdb.put(...);
+    }).then(function (resultOfPut) {
+        return localdb.get(...);
+    }).then(function (resultOfGet) {
+         return localdb.put(...);
+    }).catch(function (err) {
+        console.log(err);
+    });`
 
 
 
