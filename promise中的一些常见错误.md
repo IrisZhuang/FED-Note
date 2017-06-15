@@ -56,25 +56,25 @@ then 里面调用then,更好的实现方式是composing promises，后一个then
 
 2. 用promise.all()实现forEach/for/while
 
-｀// I want to remove() all docs
-db.allDocs({include_docs: true}).then(function (result) {
-  result.rows.forEach(function (row) {
-    db.remove(row.doc);  
-  });
-}).then(function () {
-  // I naively believe all docs have been removed() now!
-});｀
+        // I want to remove() all docs  
+        db.allDocs({include_docs: true}).then(function (result) {  
+        result.rows.forEach(function (row) {  
+            db.remove(row.doc);    
+        });  
+        }).then(function () {  
+        // I naively believe all docs have been removed() now!  
+        });  
 
 前一个then并没有返回一个新的promise结果给第二个then,所以第二个then在db.remove()之前就已经执行。
 
 解决方案：
-｀db.allDocs({include_docs: true}).then(function (result) {
-  return Promise.all(result.rows.map(function (row) {
-    return db.remove(row.doc);
-  }));
-}).then(function (arrayOfResults) {
-  // All docs have really been removed() now!
-});｀
+        db.allDocs({include_docs: true}).then(function (result) {  
+        return Promise.all(result.rows.map(function (row) {  
+            return db.remove(row.doc);  
+        }));  
+        }).then(function (arrayOfResults) {  
+        // All docs have really been removed() now!  
+        });  
 
 
 3. 没有加 .catch()
@@ -86,10 +86,10 @@ db.allDocs({include_docs: true}).then(function (result) {
 
 4. 使用"deferred"
 
-jQuery and Angular were using this "deferred" pattern,
-which has now been replaced with the ES6 Promise spec
+    jQuery and Angular were using this "deferred" pattern,
+    which has now been replaced with the ES6 Promise spec
 
-deferred是jQuery和Angular中实现promise的方式，现在已被ES6的Promise代替
+    deferred是jQuery和Angular中实现promise的方式，现在已被ES6的Promise代替
 
 5. side effects 代替return 
 (关键问题，Seriously, this is the one weird trick that, once you understand it, will prevent all of the errors I've been talking about.)
