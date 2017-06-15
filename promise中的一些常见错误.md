@@ -4,77 +4,59 @@
 1. 正确使用composing promises  
 
         remotedb.allDocs({  
-
             include_docs: true,  
-
             attachments: true  
-
         }).then(function (result) {  
-
             var docs = result.rows;  
 
             docs.forEach(function(element) {  
-
                 localdb.put(element.doc).then(function(response) {  
-
                 alert("Pulled doc with id " + element.doc._id + " and added to local db.");  
-
-        }).catch(function (err) {   
-
+            }).catch(function (err) {   
                 if (err.name == 'conflict') {  
-
                 localdb.get(element.doc._id).then(function (resp) {  
-
                 localdb.remove(resp._id, resp._rev).then(function (resp) {  
+             // et cetera...  
 
-        // et cetera...  
 
+    then 里面调用then,更好的实现方式是composing promises，后一个then会调用前一个返回的结果。
 
-then 里面调用then,更好的实现方式是composing promises，后一个then会调用前一个返回的结果。
+    优化方案：  
 
-优化方案：  
-
-    remotedb.allDocs(...).then(function (resultOfAllDocs) {  
-
-        return localdb.put(...);  
-
-    }).then(function (resultOfPut) {  
-
-        return localdb.get(...);  
-
-    }).then(function (resultOfGet) {  
-
-         return localdb.put(...);  
-
-    }).catch(function (err) {  
-
-        console.log(err);  
-
-    });
+        remotedb.allDocs(...).then(function (resultOfAllDocs) {  
+            return localdb.put(...);  
+        }).then(function (resultOfPut) {  
+            return localdb.get(...);  
+        }).then(function (resultOfGet) {  
+            return localdb.put(...);  
+        }).catch(function (err) {  
+            console.log(err);  
+        });
 
 
 
 2. 用promise.all()实现forEach/for/while
 
-        // I want to remove() all docs  
-        db.allDocs({include_docs: true}).then(function (result) {  
-        result.rows.forEach(function (row) {  
-            db.remove(row.doc);    
-        });  
-        }).then(function () {  
-        // I naively believe all docs have been removed() now!  
-        });  
+    // I want to remove() all docs  
+    db.allDocs({include_docs: true}).then(function (result) {  
+    result.rows.forEach(function (row) {  
+        db.remove(row.doc);    
+    });  
+    }).then(function () {  
+    // I naively believe all docs have been removed() now!  
+    });  
 
-前一个then并没有返回一个新的promise结果给第二个then,所以第二个then在db.remove()之前就已经执行。
+    前一个then并没有返回一个新的promise结果给第二个then,所以第二个then在db.remove()之前就已经执行。
 
-解决方案：
-        db.allDocs({include_docs: true}).then(function (result) {  
-        return Promise.all(result.rows.map(function (row) {  
-            return db.remove(row.doc);  
-        }));  
-        }).then(function (arrayOfResults) {  
-        // All docs have really been removed() now!  
-        });  
+    解决方案：
+
+    db.allDocs({include_docs: true}).then(function (result) {  
+    return Promise.all(result.rows.map(function (row) {  
+        return db.remove(row.doc);  
+    }));  
+    }).then(function (arrayOfResults) {  
+    // All docs have really been removed() now!  
+    });  
 
 
 3. 没有加 .catch()
@@ -98,8 +80,8 @@ then 里面调用then,更好的实现方式是composing promises，后一个then
 
     函数一般认为是没有状态的，每次用相同的输入调用时应当给出相同的输出，且不会影响程序的其它部分。如果函数对程序的状态有影响，这种影响就叫作“side effects”。  例如：  
 
-    `
-        int counter = 0;
+    
+    int counter = 0;
 
     // with side effect
     int intCounter() {
@@ -111,22 +93,24 @@ then 里面调用then,更好的实现方式是composing promises，后一个then
     int intNumber(int m) {
         return m + 1;
     }
-    `
+    
     intCounter改变了外部环境,所以是side effects; intNumber只改变了自身变量，所以without side effect；
 
-`somePromise().then(function () {
-  someOtherPromise();
-}).then(function () {
-  // Gee, I hope someOtherPromise() has resolved!
-  // Spoiler alert: it hasn't.
-});
-`
+    somePromise().then(function () {  
+    someOtherPromise();  
+    }).then(function () {  
+    // Gee, I hope someOtherPromise() has resolved!  
+    // Spoiler alert: it hasn't.  
+    });  
 
-eg.
-`somePromise().then(function () {
-  // I'm inside a then() function!
-});`
-当我们有一个then()的时候，我们可以做这些事：
+
+    eg.
+    somePromise().then(function () {  
+    // I'm inside a then() function!  
+    });  
+
+
+    当我们有一个then()的时候，我们可以做这些事：
 
   - 返回一个promise
   - 返回一个异步的value 或者 undefine
