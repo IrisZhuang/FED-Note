@@ -122,4 +122,31 @@
 
 
 ##### 进阶错误
+1. 不知道用promise.resolv()
 
+    习惯new Promise((resolve,reject)=>{resolve()} ).then()
+    可以优化为
+    Promise.resolve(someSynchronousValue).then();
+    好处是一些同步错误可以被捕捉到。
+
+2. catch 和 then第二个参数的区别
+
+    见初级问题3，then第二个参数无法捕捉自身throw的error
+
+3. 如何用promise实现aysnc的series?
+
+            function executeSequentially(promises) {  
+                var result = Promise.resolve();  
+                promises.forEach(function (promise) {  
+                    result = result.then(promise);  
+                });  
+                return result;  
+            }
+
+        promise array不能达到这个效果，他们还是会并行，因为promise被创建时，他就开始执行了，所以需要这样一个promise工厂，当promise被需要时，才会返回一个promise
+
+            function myPromiseFactory() {  
+                return somethingThatCreatesAPromise();  
+            }  
+
+4.
