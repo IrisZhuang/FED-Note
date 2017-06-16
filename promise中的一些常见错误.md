@@ -190,7 +190,9 @@
 
     * 我的一些理解 ：then中为non-function和side effects（non-returning）是两种情况
 
-            doSomething().then(Promise.resolve(resultOfDoSomething)).then(finalHandler);
+            doSomething().then(  
+                Promise.resolve(resultOfDoSomething)  
+            ).then(finalHandler);  
 
                 VS
 
