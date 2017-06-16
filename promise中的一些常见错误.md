@@ -153,12 +153,12 @@
                 return somethingThatCreatesAPromise();  
             }  
 
-4. 在第三个then中同时获取来自第二个then和第一个then的结果
+4. 如何在第三个then中同时获取来自第二个then和第一个then的结果
 
         let a = Promise.resolve(2).then((result)=>{
             return test(result).then((result2)=>{console.log(result + ':'+ result2)});
         }).then((result)=>{
-        console.log('done')
+            console.log('done')
         })
 
         function test(result){
