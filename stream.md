@@ -21,12 +21,7 @@
 
 
 ##### Node.js中应用了stream流的模块
-1. http   
-req : readable stream 
-res: writeable stream
-
-2. process.stdout, process.stderr
- 
+<img src="https://cdn-images-1.medium.com/max/1600/1*lhOvZiDrVbzF8_l8QX3ACw.png">
 
 ##### writeable:
 drain(.write()返回false时处理完积压数据后触发)
@@ -43,13 +38,22 @@ pipe/unpipe
 
 ### stream in Gulp
 
-* gulp使用的不是 Node stream 而是 Vinyl File Object Stream ,vinyl: 虚拟文件格式 path contents, gulp使用了vinyl-fs模块,特点：保留了路径的文件树
+* gulp使用的不是 Node stream 而是 Vinyl File Object Stream ,vinyl: 虚拟文件格式 Vinyl主要用两个属性来描述文件，它们分别是路径（path）及内容（contents）, gulp使用了vinyl-fs模块,特点：保留了路径的文件树
+        var File = require('vinyl');  
 
-* .src() 生成Vinyl File Object .dest()将使用Vinyl File Object，进行写入操作。
+        var coffeeFile = new File({  
+            cwd: "/",   
+            base: "/test/",  
+            path: "/test/file.coffee",  
+            contents: new Buffer("test = 123")  
+        });
+
 
 * contents的三种类型：
 1.Stream 2.Buffer 3.null
-（personal opnion:此处的Buffer并不是NodeJs中Buffer概念，只是为了区分是否以stream模式传输,NodeJs中的Buffer是stream传输的一种模式，另外两种是string 与 object）
+（personal opinion:此处的Buffer并不是NodeJs中Buffer概念，只是为了区分是否以stream模式传输,NodeJs中的Buffer是stream传输的一种模式，另外两种是string 与 object）
+
+* .src() 生成Vinyl File Object .dest()将使用Vinyl File Object，进行写入操作。
 
 * gulp-uglify只支持Buffer模式的contents,可用vinyl-buffer转换
 * 使用stream可对src设置(..,{buffer: false})
