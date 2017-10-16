@@ -135,4 +135,32 @@ promiseWhile(
 
 版本4中我们用Promise.method和Promise.bind实现loop 把loop的部分抽成promiseWhile,然后判断条件和执行代码也相应抽离出来。这样实现了高复用性，后期可以抽成公用方法，是目前相对理想的方案。
 
-然后讲下Promise.try为什么不能用呢？
+版本5:
+是否可以尝试用asycn
+getData()=>{
+    return new Promise((resolve,reject)=>{
+            $.ajax({
+                ....
+                success:(data)=>{
+                    if(!data.error_code){
+                       resolve({success: false;data: data})
+                        
+                    }else{
+                        resolve({success: true;data: data})
+                    }
+                }
+                error:(data)=>{
+                    resolve({success: false;data: data})
+                }
+            })
+    })
+}
+
+let resp = await getData();
+while(!resp.success){
+    resp = await getData();
+}
+resp = resp.data;
+
+借鉴：
+[Correct way to write loops for promise.](https://stackoverflow.com/questions/24660096/correct-way-to-write-loops-for-promise)
